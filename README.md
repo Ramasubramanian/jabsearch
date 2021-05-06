@@ -23,9 +23,8 @@ However if you want to run this in your own machine and get notified you can use
 ### Instructions to install
 - Clone the repo
 - Execute `npm install` command
-- Open `index.js` and change the first 6 lines as per your requirement
+- Open `index.js` and change the first 5 lines as per your requirement
 ```js
-const daysToCheckFor = 3;
 const pincodesToCheck = ['110001', '110002'];
 const vaccinesToCheck = ['COVISHIELD', 'COVAXIN'];
 const districtIdToCheck = 571;
