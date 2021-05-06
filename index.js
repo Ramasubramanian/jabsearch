@@ -1,5 +1,4 @@
 //===================User config to be changed===================//
-const daysToCheckFor = 3;
 const pincodesToCheck = ['600095', '600100'];
 const vaccinesToCheck = ['COVISHIELD', 'COVAXIN'];
 const districtIdToCheck = 571;
@@ -18,7 +17,7 @@ axios.defaults.headers.common['User-Agent'] = "Mozilla/5.0 (Macintosh; Intel Mac
 
 const baseUrl = 'https://cdn-api.co-vin.in/api/v2';
 const getByPinPath = 'appointment/sessions/public/calendarByPin';
-const getByDistrictPath = 'appointment/sessions/public/findByDistrict';
+const getByDistrictPath = 'appointment/sessions/public/calendarByDistrict';
 
 function isObjectEligible(session) {
     return session['min_age_limit'] === 18
@@ -89,7 +88,7 @@ async function getSlotsByPinCodes(pincodes) {
 }
 
 async function getSlotsByPin(pin) {
-    let promises = generateNextNDates(daysToCheckFor)
+    let promises = generateNextNDates(1)
         .map(async date => await getSlotsByPinAndDate(pin, date));
     return await Promise.all(promises);
 }
@@ -106,7 +105,7 @@ async function getSlotsByPinAndDate(pin, date) {
 }
 
 async function getSlotsByDistrict(dictrictId) {
-    let promises = generateNextNDates(daysToCheckFor)
+    let promises = generateNextNDates(1)
         .map(async date => await getSlotsByDistrictAndDate(dictrictId, date));
     return await Promise.all(promises);
 }
