@@ -125,7 +125,7 @@ async function main() {
     let pinSlots = await getSlotsByPinCodes(pincodesToCheck);
     let availableSlotsByPin = findAvailableSlotsByCenter(pinSlots.flat());
     let districSlots = await getSlotsByDistrict(districtIdToCheck);
-    let availableSlotsByDistrict = findAvailableSlotsByDistrict(districSlots.flat());
+    let availableSlotsByDistrict = findAvailableSlotsByCenter(districSlots.flat());
     let availableSlots = availableSlotsByPin.concat(availableSlotsByDistrict);
     console.log("Available slots size: " + availableSlots.length);
     if (availableSlots.length > 0) {
