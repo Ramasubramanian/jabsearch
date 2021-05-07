@@ -2,7 +2,7 @@
 const pincodesToCheck = ['600095', '600100'];
 const vaccinesToCheck = ['COVISHIELD', 'COVAXIN'];
 const districtIdToCheck = 571;
-const minutesToCheckFor = 15;
+const minutesToCheckFor = 5;
 
 //====================Start of program DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING=====================
 
@@ -11,7 +11,7 @@ const moment = require('moment');
 const notifier = require('node-notifier');
 const cron = require('node-cron');
 
-let minutesToCheck = minutesToCheckFor < 15 ? 15 : minutesToCheckFor;
+let minutesToCheck = minutesToCheckFor < 1 ? 1 : minutesToCheckFor;
 
 axios.defaults.headers.common['User-Agent'] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0";
 
@@ -134,6 +134,7 @@ async function main() {
             title: 'Vaccine Slots Available',
             message: `Pincode: ${slot['pincode']}, Address: ${slot['address']}`,
             timeout: 3600,
+            sound: true,
             wait: true
         }));
     } else {
@@ -141,6 +142,7 @@ async function main() {
             title: 'No Vaccine Slots Available',
             message: `:-( Try later`,
             timeout: 300,
+            sound: true,
             wait: false
         });
     }
