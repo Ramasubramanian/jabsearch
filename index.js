@@ -1,8 +1,9 @@
 //===================User config to be changed===================//
-const pincodesToCheck = ['600095', '600100'];
+const pincodesToCheck = ['600095', '600096', '600100'];
 const vaccinesToCheck = ['COVISHIELD', 'COVAXIN'];
 const districtIdToCheck = 571;
-const minutesToCheckFor = 5;
+const minutesToCheckFor = 1;
+const ageToCheckFor = 18; //45 or 18 only
 
 //====================Start of program DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING=====================
 
@@ -10,6 +11,7 @@ const axios = require('axios');
 const moment = require('moment');
 const notifier = require('node-notifier');
 const cron = require('node-cron');
+let noVaccineResponseCount = 0;
 
 let minutesToCheck = minutesToCheckFor < 1 ? 1 : minutesToCheckFor;
 
@@ -20,7 +22,7 @@ const getByPinPath = 'appointment/sessions/public/calendarByPin';
 const getByDistrictPath = 'appointment/sessions/public/calendarByDistrict';
 
 function isObjectEligible(session) {
-    return session['min_age_limit'] === 18
+    return session['min_age_limit'] === ageToCheckFor
         && session['available_capacity'] > 0
         && vaccinesToCheck.includes(session['vaccine']);
 }
@@ -47,6 +49,9 @@ function findAvailableSlotsByCenter(slots) {
                 centerData['vaccines'] = [... new Set(center['sessions']
                     .filter(session => isObjectEligible(session))
                     .map(session => session['vaccine']))];
+                centerData['available_slots'] = center['sessions']
+                    .filter(session => isObjectEligible(session))
+                    .map(session => session['available_capacity']);
                 return centerData;
             });
     } else {
@@ -67,6 +72,7 @@ function findAvailableSlotsByDistrict(slots) {
                 centerData['pincode'] = center['pincode'];
                 centerData['dates'] = [center['date']];
                 centerData['vaccines'] = [center['vaccine']];
+                centerData['available_slots'] = center['available_capacity'];
                 return centerData;
             });
     } else {
@@ -138,13 +144,16 @@ async function main() {
             wait: true
         }));
     } else {
-        notifier.notify({
-            title: 'No Vaccine Slots Available',
-            message: `:-( Try later`,
-            timeout: 300,
-            sound: true,
-            wait: false
-        });
+        if (++noVaccineResponseCount == 5) {
+            notifier.notify({
+                title: 'No Vaccine Slots Available',
+                message: `:-( Try later`,
+                timeout: 300,
+                sound: true,
+                wait: false
+            });
+            noVaccineResponseCount = 0;
+        }
     }
 }
 
