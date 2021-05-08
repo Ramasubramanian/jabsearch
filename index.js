@@ -16,6 +16,9 @@ let noVaccineResponseCount = 0;
 let minutesToCheck = minutesToCheckFor < 1 ? 1 : minutesToCheckFor;
 
 axios.defaults.headers.common['User-Agent'] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0";
+axios.defaults.headers.common['Cache-Control'] = 'no-cache';
+axios.defaults.headers.common['Pragma'] = 'no-cache';
+axios.defaults.headers.common['Expires'] = 0;
 
 const baseUrl = 'https://cdn-api.co-vin.in/api/v2';
 const getByPinPath = 'appointment/sessions/public/calendarByPin';
