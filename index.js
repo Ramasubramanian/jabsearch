@@ -1,6 +1,6 @@
 //===================User config to be changed===================//
 const pincodesToCheck = ['600095', '600096', '600100'];
-const vaccinesToCheck = ['COVISHIELD', 'COVAXIN'];
+const vaccinesToCheck = ['COVISHIELD', 'COVAXIN', 'SPUTNIK V'];
 const districtIdToCheck = 571;
 const minutesToCheckFor = 1;
 const ageToCheckFor = 18; //45 or 18 only
