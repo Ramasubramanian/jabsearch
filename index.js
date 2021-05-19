@@ -4,7 +4,7 @@ const vaccinesToCheck = ['COVAXIN'];
 const districtIdToCheck = 571;
 const minutesToCheckFor = 1;
 const ageToCheckFor = 18; //45 or 18 only
-const dose = 2; //1 or 2 for specific, 0 for any dose
+const dose = 1; //1 or 2 for specific, 0 for any dose
 
 //====================Start of program DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING=====================
 
@@ -13,6 +13,7 @@ const moment = require('moment');
 const notifier = require('node-notifier');
 const cron = require('node-cron');
 let noVaccineResponseCount = 0;
+let availableSlotsField = dose > 0 ? `available_capacity_dose${dose}` : 'available_capacity';
 
 let minutesToCheck = minutesToCheckFor < 1 ? 1 : minutesToCheckFor;
 
@@ -27,8 +28,7 @@ const getByDistrictPath = 'appointment/sessions/public/calendarByDistrict';
 
 function isObjectEligible(session) {
     return session['min_age_limit'] === ageToCheckFor
-        && (dose > 0 ? session[`available_capacity_dose${dose}`] > 0
-            : session['available_capacity'] > 0)
+        && session[availableSlotsField] > 0
         && vaccinesToCheck.includes(session['vaccine']);
 }
 
@@ -54,9 +54,9 @@ function findAvailableSlotsByCenter(slots) {
                 centerData['vaccines'] = [... new Set(center['sessions']
                     .filter(session => isObjectEligible(session))
                     .map(session => session['vaccine']))];
-                centerData['available_slots'] = center['sessions']
+                centerData[availableSlotsField] = center['sessions']
                     .filter(session => isObjectEligible(session))
-                    .map(session => session['available_capacity']);
+                    .map(session => session[availableSlotsField]);
                 return centerData;
             });
     } else {
