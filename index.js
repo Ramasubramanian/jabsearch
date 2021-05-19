@@ -1,9 +1,10 @@
 //===================User config to be changed===================//
-const pincodesToCheck = ['600095', '600096', '600100'];
-const vaccinesToCheck = ['COVISHIELD', 'COVAXIN', 'SPUTNIK V'];
+const pincodesToCheck = ['600095', '600096', '600100', '600116'];
+const vaccinesToCheck = ['COVAXIN'];
 const districtIdToCheck = 571;
 const minutesToCheckFor = 1;
 const ageToCheckFor = 18; //45 or 18 only
+const dose = 2; //1 or 2 for specific, 0 for any dose
 
 //====================Start of program DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING=====================
 
@@ -26,7 +27,8 @@ const getByDistrictPath = 'appointment/sessions/public/calendarByDistrict';
 
 function isObjectEligible(session) {
     return session['min_age_limit'] === ageToCheckFor
-        && session['available_capacity'] > 0
+        && (dose > 0 ? session[`available_capacity_dose${dose}`] > 0
+            : session['available_capacity'] > 0)
         && vaccinesToCheck.includes(session['vaccine']);
 }
 
