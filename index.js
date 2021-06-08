@@ -5,6 +5,7 @@ const districtIdToCheck = 571;
 const minutesToCheckFor = 1;
 const ageToCheckFor = 18; //45 or 18 only
 const dose = 1; //1 or 2 for specific, 0 for any dose
+const dateToCheckFor = '08-06-2021'; //null for all possible dates
 
 //====================Start of program DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING=====================
 
@@ -12,6 +13,8 @@ const axios = require('axios');
 const moment = require('moment');
 const notifier = require('node-notifier');
 const cron = require('node-cron');
+
+const NO_VACCINE_ALERT_FREQUENCY = 60;
 let noVaccineResponseCount = 0;
 let availableSlotsField = dose > 0 ? `available_capacity_dose${dose}` : 'available_capacity';
 
@@ -28,7 +31,8 @@ const getByDistrictPath = 'appointment/sessions/public/calendarByDistrict';
 
 function isObjectEligible(session) {
     return session['min_age_limit'] === ageToCheckFor
-        && session[availableSlotsField] > 0
+        && session[availableSlotsField] > 1
+        && (dateToCheckFor ? session['date'] === dateToCheckFor : true)
         && vaccinesToCheck.includes(session['vaccine']);
 }
 
@@ -149,7 +153,7 @@ async function main() {
             wait: true
         }));
     } else {
-        if (++noVaccineResponseCount == 5) {
+        if (++noVaccineResponseCount === NO_VACCINE_ALERT_FREQUENCY) {
             notifier.notify({
                 title: 'No Vaccine Slots Available',
                 message: `:-( Try later`,
